@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">madassessment</string>
+    <string name="app_name">PlacesToStay</string>
+
+    <string name="choosemap">Choose map</string>
 </resources>
