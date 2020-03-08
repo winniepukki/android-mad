@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:enabled="true"
         android:clickable="true"
-        android:id="@+id/map1"
+        android:id="@+id/main_map"
         tilesource="Mapnik"
         />
 

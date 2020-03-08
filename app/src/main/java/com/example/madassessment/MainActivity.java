@@ -1,5 +1,8 @@
 package com.example.madassessment;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,18 +24,28 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
+    private Double latitude = Constants.DEFAULT_LAT;
+    private Double longitude = Constants.DEFAULT_LON;
+    private Double zoom = Constants.DEFAULT_ZOOM;
+
     MapView mv;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        /*
+        *   Performing all initial checks and
+        *   setting the appropriate values
+        */
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(MainActivity.this, "Please enable the LOCATION ACCESS in settings.", Toast.LENGTH_LONG).show();
+        }
 
         LocationManager mgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Location location = mgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-        double latitude = 60.169;
-        double longitude = 24.938;
 
         if (location != null) {
             latitude = location.getLatitude();
@@ -42,12 +55,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         // This line sets the user agent, a requirement to download OSM maps
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
 
-        setContentView(R.layout.activity_main);
-
-        mv = findViewById(R.id.map1);
-
+        mv = findViewById(R.id.main_map);
         mv.setMultiTouchControls(true);
-        mv.getController().setZoom(16.0);
+        mv.getController().setZoom(zoom);
         mv.getController().setCenter(new GeoPoint(latitude, longitude));
     }
 
