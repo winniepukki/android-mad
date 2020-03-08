@@ -22,7 +22,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
     MapView mv;
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -60,13 +60,21 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         return true;
     }
 
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.choosemap) {
-            //Intent intent = new Intent(this, .class);
-            //startActivity(intent);
+        if (item.getItemId() == R.id.addplace) {
+            Intent intent = new Intent(this, AddPlaceToStay.class);
+            startActivityForResult(intent, 0);
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == 0) {
+            // TO-BE IMPLEMENTED...
+        }
     }
 
     /*

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/choosemap" android:title="@string/choosemap"/>
+    <item android:id="@+id/addplace" android:title="@string/addplace"/>
+    <item android:id="@+id/saveplaces" android:title="@string/saveplaces"/>
 </menu>
