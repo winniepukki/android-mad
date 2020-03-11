@@ -15,6 +15,8 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.OverlayItem;
 
 import android.location.LocationManager;
 import android.location.LocationListener;
@@ -23,6 +25,9 @@ import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
+
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
     private Double latitude = Constants.DEFAULT_LAT;
@@ -30,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private Double zoom = Constants.DEFAULT_ZOOM;
 
     MapView mv;
+    ItemizedIconOverlay<OverlayItem> items;
+    ItemizedIconOverlay.OnItemGestureListener<OverlayItem> markerGestureListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,6 +69,26 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         mv.setMultiTouchControls(true);
         mv.getController().setZoom(zoom);
         mv.getController().setCenter(new GeoPoint(latitude, longitude));
+
+        markerGestureListener = new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+            public boolean onItemLongPress(int i, OverlayItem item) {
+                Toast.makeText(MainActivity.this, item.getSnippet(), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+
+            public boolean onItemSingleTapUp(int i, OverlayItem item) {
+                Toast.makeText(MainActivity.this, item.getSnippet(), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        };
+
+        items = new ItemizedIconOverlay<OverlayItem>(this, new ArrayList<OverlayItem>(), markerGestureListener);
+        OverlayItem randomLocation = new OverlayItem("Random location", "Bad place to stay as it smells", new GeoPoint(37.421, -122.084));
+
+        randomLocation.setMarker(getResources().getDrawable(R.drawable.marker_default));
+
+        items.addItem(randomLocation);
+        mv.getOverlays().add(items);
     }
 
     /*
@@ -104,20 +131,20 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
      *   Handling changes in location preferences
      */
     public void onLocationChanged(Location newLoc) {
-        Toast.makeText(this, "Location=" + newLoc.getLatitude() + " " + newLoc.getLongitude(), Toast.LENGTH_LONG).show();
-        mv.getController().setCenter(new GeoPoint(newLoc.getLatitude(), newLoc.getLongitude()));
+        //Toast.makeText(this, "Location=" + newLoc.getLatitude() + " " + newLoc.getLongitude(), Toast.LENGTH_LONG).show();
+        //mv.getController().setCenter(new GeoPoint(newLoc.getLatitude(), newLoc.getLongitude()));
     }
 
     public void onProviderDisabled(String provider) {
-        Toast.makeText(this, "Provider " + provider + " disabled", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Provider " + provider + " disabled", Toast.LENGTH_LONG).show();
     }
 
     public void onProviderEnabled(String provider) {
-        Toast.makeText(this, "Provider " + provider + " enabled", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Provider " + provider + " enabled", Toast.LENGTH_LONG).show();
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        Toast.makeText(this, "Status changed: " + status, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Status changed: " + status, Toast.LENGTH_LONG).show();
     }
 
 }
