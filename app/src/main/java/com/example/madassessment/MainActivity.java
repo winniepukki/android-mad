@@ -1,6 +1,7 @@
 package com.example.madassessment;
 
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
@@ -155,18 +156,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         else if (requestCode == 1) {
             Bundle extras = intent.getExtras();
 
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            boolean poiAutoSave = prefs.getBoolean("autosavepoi", false);
+
             String getPoiName = extras.getString("com.example.poiname");
             String getPoiType = extras.getString("com.example.poitype");
             Double getPoiPrice = extras.getDouble("com.example.poiprice");
 
-            try {
-                PointOfInterestDAO pointOfInterest = new PointOfInterestDAO(getPoiName, getPoiType, getPoiPrice);
-                storesPointsOfInterest.add(pointOfInterest);
+            if(poiAutoSave) {
+                try {
+                    PointOfInterestDAO pointOfInterest = new PointOfInterestDAO(getPoiName, getPoiType, getPoiPrice);
+                    storesPointsOfInterest.add(pointOfInterest);
+                }
+                catch (Exception e) {
+                    popupMessage("Error: " + e.getMessage() + " error has occurred.");
+                }
             }
-            catch (Exception e) {
-                popupMessage("Error: " + e.getMessage() + " error has occurred.");
-            }
-
         }
     }
 
