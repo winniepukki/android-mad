@@ -2,6 +2,7 @@ package com.example.madassessment;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,9 @@ import android.widget.Toast;
 
 import com.example.madassessment.dao.PointOfInterestDAO;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 
@@ -116,6 +120,27 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             Intent intent = new Intent(this, AddPlaceToStay.class);
             startActivityForResult(intent, 1);
             return true;
+        }
+        else if (item.getItemId() == R.id.saveplaces) {
+            PrintWriter pw = null;
+            try {
+                File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/records.csv");
+                pw = new PrintWriter(f);
+
+                for (int i = 0; i < storesPointsOfInterest.size(); i++) {
+                    String str = storesPointsOfInterest.get(i).toString();
+                    pw.println(str);
+                }
+            }
+            catch (FileNotFoundException e) {
+                e.printStackTrace();
+                new AlertDialog.Builder(this)
+                        .setPositiveButton("OK", null)
+                        .setMessage("ERROR: " + e).show();
+            }
+            finally {
+                pw.close();
+            }
         }
         return false;
     }
