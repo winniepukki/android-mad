@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private Double latitude = Constants.DEFAULT_LAT;
     private Double longitude = Constants.DEFAULT_LON;
     private Double zoom = Constants.DEFAULT_ZOOM;
+    private static final String TAG = "MainActivity";
 
     ArrayList<PointOfInterestDAO> storesPointsOfInterest;
     MapView mv;
@@ -93,11 +95,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         };
 
         items = new ItemizedIconOverlay<OverlayItem>(this, new ArrayList<OverlayItem>(), markerGestureListener);
-        OverlayItem randomLocation = new OverlayItem("Random location", "Bad place to stay as it smells", new GeoPoint(37.421, -122.084));
+        OverlayItem randomLocation = new OverlayItem("Random location", "Bad place to stay as it smells", new GeoPoint(latitude, longitude));
 
         randomLocation.setMarker(getResources().getDrawable(R.drawable.marker_default));
 
-        items.addItem(randomLocation);
+        //items.addItem(randomLocation);
         mv.getOverlays().add(items);
     }
 
@@ -174,6 +176,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             String getPoiType = extras.getString("com.example.poitype");
             Double getPoiPrice = extras.getDouble("com.example.poiprice");
 
+            OverlayItem someLocation = new OverlayItem(getPoiName, getPoiName + " " + getPoiType + " " + getPoiPrice, new GeoPoint(latitude, longitude));
+            someLocation.setMarker(getResources().getDrawable(R.drawable.marker_default));
+
+            items.addItem(someLocation);
+            mv.getOverlays().add(items);
+
             if(poiAutoSave) {
                 try {
                     PointOfInterestDAO pointOfInterest = new PointOfInterestDAO(getPoiName, getPoiType, getPoiPrice);
@@ -192,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void onLocationChanged(Location newLoc) {
         //Toast.makeText(this, "Location=" + newLoc.getLatitude() + " " + newLoc.getLongitude(), Toast.LENGTH_LONG).show();
         //mv.getController().setCenter(new GeoPoint(newLoc.getLatitude(), newLoc.getLongitude()));
+        //Log.d(TAG, newLoc.getLatitude() + " " + newLoc.getLongitude());
     }
 
     public void onProviderDisabled(String provider) {
