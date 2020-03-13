@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">PlacesToStay</string>
 
-    <string name="addplace">Add Place to Stay</string>
+    <string name="addplace">Add Places to Stay</string>
     <string name="saveplaces">Save Places to Stay</string>
+    <string name="loadplaces">Load Places to Stay</string>
     <string name="setprefs">Preferences</string>
 
     <string name="poiname">POI Name</string>

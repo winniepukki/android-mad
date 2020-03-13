@@ -60,8 +60,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         *   Performing all initial checks and
         *   setting the appropriate values
         */
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(MainActivity.this, "Please enable the LOCATION ACCESS in settings.", Toast.LENGTH_LONG).show();
+        }
+        else {
+            // REQUEST PERMISSION......
         }
 
         LocationManager mgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -162,33 +166,34 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         // Set preferences request code event handler
-        if (requestCode == 0) {
-            // TO-BE IMPLEMENTED...
-        }
+        if (requestCode == 0) { }
         // Set add POI request code event handler
         else if (requestCode == 1) {
-            Bundle extras = intent.getExtras();
+            if (resultCode == RESULT_OK) {
+                Bundle extras = intent.getExtras();
 
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            boolean poiAutoSave = prefs.getBoolean("autosavepoi", false);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                boolean poiAutoSave = prefs.getBoolean("autosavepoi", false);
 
-            String getPoiName = extras.getString("com.example.poiname");
-            String getPoiType = extras.getString("com.example.poitype");
-            Double getPoiPrice = extras.getDouble("com.example.poiprice");
+                String getPoiName = extras.getString("com.example.poiname");
+                String getPoiType = extras.getString("com.example.poitype");
+                Double getPoiPrice = extras.getDouble("com.example.poiprice");
 
-            OverlayItem someLocation = new OverlayItem(getPoiName, getPoiName + " " + getPoiType + " " + getPoiPrice, new GeoPoint(latitude, longitude));
-            someLocation.setMarker(getResources().getDrawable(R.drawable.marker_default));
+                OverlayItem someLocation = new OverlayItem(getPoiName, getPoiName + " " + getPoiType + " " + getPoiPrice, new GeoPoint(latitude, longitude));
+                someLocation.setMarker(getResources().getDrawable(R.drawable.marker_default));
 
-            items.addItem(someLocation);
-            mv.getOverlays().add(items);
+                items.addItem(someLocation);
+                mv.getOverlays().add(items);
 
-            if(poiAutoSave) {
-                try {
-                    PointOfInterestDAO pointOfInterest = new PointOfInterestDAO(getPoiName, getPoiType, getPoiPrice);
-                    storesPointsOfInterest.add(pointOfInterest);
-                }
-                catch (Exception e) {
-                    popupMessage("Error: " + e.getMessage() + " error has occurred.");
+                if(poiAutoSave) {
+                    try {
+                        PointOfInterestDAO pointOfInterest = new PointOfInterestDAO(getPoiName, getPoiType, getPoiPrice);
+                        storesPointsOfInterest.add(pointOfInterest);
+                    }
+                    catch (Exception e) {
+                        popupMessage("Error: " + e.getMessage() + " error has occurred.");
+                        e.printStackTrace();
+                    }
                 }
             }
         }
