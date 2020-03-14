@@ -38,6 +38,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -135,15 +136,31 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         else if (item.getItemId() == R.id.loadplaces) {
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(Environment.getExternalStorageDirectory().getAbsolutePath() + "/records.csv"));
-
                 String magicLine = "";
+
+                ArrayList<PointOfInterestEntity> storesEntities = new ArrayList<>();
 
                 while((magicLine = reader.readLine()) != null) {
                     String components[] = magicLine.split(",");
-                    PointOfInterestEntity pointOfInterestEntity = new PointOfInterestEntity(components[0], components[1], Double.parseDouble(components[2]));
-                    storesPointsOfInterest.add(pointOfInterestEntity);
+                    PointOfInterestEntity pointOfInterestEntity = new PointOfInterestEntity(components[0], components[1], Double.parseDouble(components[2]), Double.parseDouble(components[3]), Double.parseDouble(components[4]));
+                    storesEntities.add(pointOfInterestEntity);
                 }
-                Log.v(TAG, String.format("%d", storesPointsOfInterest.size()));
+
+                for(int i = 0; i < storesEntities.size(); i++) {
+                    String getPoiName = storesEntities.get(i).getName();
+                    String getPoiType = storesEntities.get(i).getType();
+
+                    Double getPoiPrice = storesEntities.get(i).getPrice();
+                    Double getPoiLatitude = storesEntities.get(i).getLatitude();
+                    Double getPoiLongitude = storesEntities.get(i).getLongitude();
+
+                    OverlayItem someLocation = new OverlayItem(getPoiName, getPoiName + " " + getPoiType + " " + getPoiPrice, new GeoPoint(getPoiLatitude, getPoiLongitude));
+                    someLocation.setMarker(getResources().getDrawable(R.drawable.marker_default));
+
+                    items.addItem(someLocation);
+                    mv.getOverlays().add(items);
+                }
+                Log.v(TAG, String.format("%d", storesEntities.size()));
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -175,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 mv.getOverlays().add(items);
 
                 try {
-                    PointOfInterestEntity pointOfInterest = new PointOfInterestEntity(getPoiName, getPoiType, getPoiPrice);
+                    PointOfInterestEntity pointOfInterest = new PointOfInterestEntity(getPoiName, getPoiType, getPoiPrice, latitude, longitude);
                     storesPointsOfInterest.add(pointOfInterest);
 
                     if(poiAutoSave) {
@@ -193,20 +210,24 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     /*
      *   Handling changes in location preferences
      */
+    @Override
     public void onLocationChanged(Location newLoc) {
         //Toast.makeText(this, "Location=" + newLoc.getLatitude() + " " + newLoc.getLongitude(), Toast.LENGTH_LONG).show();
         //mv.getController().setCenter(new GeoPoint(newLoc.getLatitude(), newLoc.getLongitude()));
         //Log.d(TAG, newLoc.getLatitude() + " " + newLoc.getLongitude());
     }
 
+    @Override
     public void onProviderDisabled(String provider) {
         //Toast.makeText(this, "Provider " + provider + " disabled", Toast.LENGTH_LONG).show();
     }
 
+    @Override
     public void onProviderEnabled(String provider) {
         //Toast.makeText(this, "Provider " + provider + " enabled", Toast.LENGTH_LONG).show();
     }
 
+    @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         //Toast.makeText(this, "Status changed: " + status, Toast.LENGTH_LONG).show();
     }

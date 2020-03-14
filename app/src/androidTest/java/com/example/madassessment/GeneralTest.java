@@ -28,7 +28,7 @@ public class GeneralTest {
     @Test
     public void addPointOfInterestTest() {
         Log.d(TAG, "start of addPointOfInterestTest()");
-        PointOfInterestEntity pointOfInterestRecord = new PointOfInterestEntity("Test name", "Test type", 250.0);
+        PointOfInterestEntity pointOfInterestRecord = new PointOfInterestEntity("Test name", "Test type", 250.0, Constants.DEFAULT_LAT, Constants.DEFAULT_LON);
         ArrayList<PointOfInterestEntity> storesPointsOfInterest = new ArrayList<>();
 
         assertTrue(storesPointsOfInterest.add(pointOfInterestRecord));
