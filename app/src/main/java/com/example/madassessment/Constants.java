@@ -11,4 +11,6 @@ public class Constants {
 
     public static final String  NORMAL_MAP = "normal";
     public static final String  CYCLE_MAP = "cycle";
+
+    public static final int STORAGE_PERMISSION_CODE = 1;
 }

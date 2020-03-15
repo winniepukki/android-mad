@@ -4,5 +4,6 @@
     <item android:id="@+id/addplace" android:title="@string/addplace"/>
     <item android:id="@+id/saveplaces" android:title="@string/saveplaces"/>
     <item android:id="@+id/loadplaces" android:title="@string/loadplaces"/>
+    <item android:id="@+id/loadweb" android:title="@string/loadweb"/>
     <item android:id="@+id/setprefs" android:title="@string/setprefs"/>
 </menu>

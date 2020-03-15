@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -48,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private Double longitude = Constants.DEFAULT_LON;
     private Double zoom = Constants.DEFAULT_ZOOM;
     private static final String TAG = "MainActivity";
-    private int STORAGE_PERMISSION_CODE = 1;
 
     ItemizedIconOverlay.OnItemGestureListener<OverlayItem> markerGestureListener;
     ArrayList<PointOfInterestEntity> storesPointsOfInterest;
@@ -166,6 +166,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 e.printStackTrace();
             }
         }
+        else if (item.getItemId() == R.id.loadweb) {
+            LoadWebTask loadWebTask = new LoadWebTask();
+            loadWebTask.execute();
+        }
         return false;
     }
 
@@ -278,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            ActivityCompat.requestPermissions(MainActivity.this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, STORAGE_PERMISSION_CODE);
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, Constants.STORAGE_PERMISSION_CODE);
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -290,13 +294,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     .create().show();
         }
         else {
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, STORAGE_PERMISSION_CODE);
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, Constants.STORAGE_PERMISSION_CODE);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == STORAGE_PERMISSION_CODE) {
+        if(requestCode == Constants.STORAGE_PERMISSION_CODE) {
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permissions have been granted!", Toast.LENGTH_LONG).show();
             }
@@ -306,4 +310,3 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
     }
 }
-
