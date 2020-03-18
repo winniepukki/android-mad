@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -64,10 +63,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         *   setting the appropriate values
         */
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(MainActivity.this, "Location permissions were granted", Toast.LENGTH_LONG).show();
-        }
-        else {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             reqestStoragePermission();
         }
 
@@ -81,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             longitude = location.getLongitude();
         }
 
-        // This line sets the user agent, a requirement to download OSM maps
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
 
         mv = findViewById(R.id.main_map);
@@ -136,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         else if (item.getItemId() == R.id.loadweb) {
             LoadWebTask loadWebTask = new LoadWebTask();
             loadWebTask.execute();
+            loadPlacesFromWeb();
         }
         else if (item.getItemId() == R.id.saveweb) {
             SaveWebTask saveWebTask = new SaveWebTask();
@@ -278,6 +274,51 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 mv.getOverlays().add(items);
             }
             Toast.makeText(this, String.format("Loaded %d places from the storage", storesEntities.size()), Toast.LENGTH_LONG).show();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private boolean loadPlacesFromWeb() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(Environment.getExternalStorageDirectory().getAbsolutePath() + "/records.csv"));
+            String magicLine = "";
+
+            ArrayList<PointOfInterestEntity> storesEntities = new ArrayList<>();
+
+            while((magicLine = reader.readLine()) != null) {
+                String components[] = magicLine.split(",");
+                PointOfInterestEntity pointOfInterestEntity = new PointOfInterestEntity(components[0], components[1], Double.parseDouble(components[2]), Double.parseDouble(components[4]), Double.parseDouble(components[3]));
+                storesEntities.add(pointOfInterestEntity);
+            }
+
+            for(int i = 0; i < storesEntities.size(); i++) {
+                String getPoiName = storesEntities.get(i).getName();
+                String getPoiType = storesEntities.get(i).getType();
+
+                Double getPoiPrice = storesEntities.get(i).getPrice();
+                Double getPoiLatitude = storesEntities.get(i).getLatitude();
+                Double getPoiLongitude = storesEntities.get(i).getLongitude();
+
+                if (getPoiLatitude > 90 || getPoiLatitude < -90) {
+                    popupMessage("Invalid latitude! " + getPoiLatitude);
+                    return false;
+                }
+
+                if (getPoiLongitude > 180 || getPoiLongitude < -180) {
+                    popupMessage("Invalid longitude!" + getPoiLongitude);
+                    return false;
+                }
+
+                OverlayItem someLocation = new OverlayItem(getPoiName, getPoiName + " " + getPoiType + " " + getPoiPrice, new GeoPoint(getPoiLatitude, getPoiLongitude));
+                someLocation.setMarker(getResources().getDrawable(R.drawable.marker_default));
+
+                items.addItem(someLocation);
+                mv.getOverlays().add(items);
+            }
+            Toast.makeText(this, String.format("Loaded %d places from the Internet storage", storesEntities.size()), Toast.LENGTH_LONG).show();
         }
         catch (IOException e) {
             e.printStackTrace();

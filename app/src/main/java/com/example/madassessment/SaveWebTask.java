@@ -41,7 +41,7 @@ public class SaveWebTask extends AsyncTask<Void, Void, String> {
 
                 for(int i = 0; i < storesEntities.size(); i++) {
                     String getPoiName = storesEntities.get(i).getName();
-                    String getPoiType = storesEntities.get(i).getType();
+                    String getPoiType = storesEntities.get(i).getType().trim();
 
                     Double getPoiPrice = storesEntities.get(i).getPrice();
                     Double getPoiLatitude = storesEntities.get(i).getLatitude();
