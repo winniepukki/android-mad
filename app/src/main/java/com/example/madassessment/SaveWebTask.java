@@ -1,6 +1,7 @@
 package com.example.madassessment;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,6 +12,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class SaveWebTask extends AsyncTask<Void, Void, String> {
+    private static final String TAG = "MainActivity";
+
     @Override
     protected String doInBackground(Void... voids) {
         HttpURLConnection httpURLConnection = null;
@@ -28,34 +31,35 @@ public class SaveWebTask extends AsyncTask<Void, Void, String> {
             outputStream = httpURLConnection.getOutputStream();
             outputStream.write(postData.getBytes());
 
-            if(httpURLConnection.getResponseCode() == 200) {
+            if (httpURLConnection.getResponseCode() == 200) {
                 InputStream inputStream = httpURLConnection.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
                 String allRecords = "", magicLine;
 
-                while( (magicLine = bufferedReader.readLine()) != null ) {
+                while ((magicLine = bufferedReader.readLine()) != null) {
                     allRecords += magicLine;
                     return allRecords;
                 }
-            }
+            } 
             else {
                 return "HTTP ERROR: " + httpURLConnection.getResponseCode();
             }
 
-        }
+        } 
         catch (IOException e) {
             return e.toString();
-        }
+        } 
         finally {
-            if(httpURLConnection != null) {
+            if (httpURLConnection != null) {
                 httpURLConnection.disconnect();
             }
         }
         return "HTTP ERROR:";
     }
 
-    public void onPostExecute(String message) {
-        // TO-BE IMPLEMENTED...
+    @Override
+    public void onPostExecute(String result) {
+        Log.i(TAG, " " + result);
     }
 }

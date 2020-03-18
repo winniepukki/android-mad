@@ -131,46 +131,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             savePoiToLocalStorage();
         }
         else if (item.getItemId() == R.id.loadplaces) {
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(Environment.getExternalStorageDirectory().getAbsolutePath() + "/records.csv"));
-                String magicLine = "";
-
-                ArrayList<PointOfInterestEntity> storesEntities = new ArrayList<>();
-
-                while((magicLine = reader.readLine()) != null) {
-                    String components[] = magicLine.split(",");
-                    PointOfInterestEntity pointOfInterestEntity = new PointOfInterestEntity(components[0], components[1], Double.parseDouble(components[2]), Double.parseDouble(components[3]), Double.parseDouble(components[4]));
-                    storesEntities.add(pointOfInterestEntity);
-                }
-
-                for(int i = 0; i < storesEntities.size(); i++) {
-                    String getPoiName = storesEntities.get(i).getName();
-                    String getPoiType = storesEntities.get(i).getType();
-
-                    Double getPoiPrice = storesEntities.get(i).getPrice();
-                    Double getPoiLatitude = storesEntities.get(i).getLatitude();
-                    Double getPoiLongitude = storesEntities.get(i).getLongitude();
-
-                    OverlayItem someLocation = new OverlayItem(getPoiName, getPoiName + " " + getPoiType + " " + getPoiPrice, new GeoPoint(getPoiLatitude, getPoiLongitude));
-                    someLocation.setMarker(getResources().getDrawable(R.drawable.marker_default));
-
-                    items.addItem(someLocation);
-                    mv.getOverlays().add(items);
-                }
-                Log.v(TAG, String.format("%d", storesEntities.size()));
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
+            loadPlaces();
         }
         else if (item.getItemId() == R.id.loadweb) {
             LoadWebTask loadWebTask = new LoadWebTask();
             loadWebTask.execute();
-
-            /*
+        }
+        else if (item.getItemId() == R.id.saveweb) {
             SaveWebTask saveWebTask = new SaveWebTask();
             saveWebTask.execute();
-             */
         }
         return false;
     }
@@ -264,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 String magicString = storesPointsOfInterest.get(i).toString();
                 printWriter.println(magicString);
             }
-            popupMessage("Saved " + storesPointsOfInterest.size() + " Points of Interest to the local storage!");
+            Toast.makeText(this, String.format("Saved %d Points of Interest to the local storage!", storesPointsOfInterest.size()), Toast.LENGTH_LONG).show();
         }
         catch (FileNotFoundException e) {
             popupMessage("Error: " + e.getMessage() + " error has occurred.");
@@ -274,6 +243,51 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             printWriter.close();
             return true;
         }
+    }
+
+    private boolean loadPlaces() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(Environment.getExternalStorageDirectory().getAbsolutePath() + "/records.csv"));
+            String magicLine = "";
+
+            ArrayList<PointOfInterestEntity> storesEntities = new ArrayList<>();
+
+            while((magicLine = reader.readLine()) != null) {
+                String components[] = magicLine.split(",");
+                PointOfInterestEntity pointOfInterestEntity = new PointOfInterestEntity(components[0], components[1], Double.parseDouble(components[2]), Double.parseDouble(components[3]), Double.parseDouble(components[4]));
+                storesEntities.add(pointOfInterestEntity);
+            }
+
+            for(int i = 0; i < storesEntities.size(); i++) {
+                String getPoiName = storesEntities.get(i).getName();
+                String getPoiType = storesEntities.get(i).getType();
+
+                Double getPoiPrice = storesEntities.get(i).getPrice();
+                Double getPoiLatitude = storesEntities.get(i).getLatitude();
+                Double getPoiLongitude = storesEntities.get(i).getLongitude();
+
+                if (getPoiLatitude > 90 || getPoiLatitude < -90) {
+                    popupMessage("Invalid latitude! " + getPoiLatitude);
+                    return false;
+                }
+
+                if (getPoiLongitude > 180 || getPoiLongitude < -180) {
+                    popupMessage("Invalid longitude!" + getPoiLongitude);
+                    return false;
+                }
+
+                OverlayItem someLocation = new OverlayItem(getPoiName, getPoiName + " " + getPoiType + " " + getPoiPrice, new GeoPoint(getPoiLatitude, getPoiLongitude));
+                someLocation.setMarker(getResources().getDrawable(R.drawable.marker_default));
+
+                items.addItem(someLocation);
+                mv.getOverlays().add(items);
+            }
+            Toast.makeText(this, String.format("Loaded %d places from the web", storesEntities.size()), Toast.LENGTH_LONG).show();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private void reqestStoragePermission() {
