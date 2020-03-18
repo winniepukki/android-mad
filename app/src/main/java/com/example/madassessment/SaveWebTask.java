@@ -3,12 +3,8 @@ package com.example.madassessment;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.madassessment.dataEntities.PointOfInterestEntity;
-
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.OverlayItem;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

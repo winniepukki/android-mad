@@ -146,9 +146,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        // Set preferences request code event handler
         if (requestCode == 0) { }
-        // Set add POI request code event handler
         else if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 Bundle extras = intent.getExtras();
@@ -187,25 +185,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
      */
     @Override
     public void onLocationChanged(Location newLoc) {
-        //Toast.makeText(this, "Location=" + newLoc.getLatitude() + " " + newLoc.getLongitude(), Toast.LENGTH_LONG).show();
-        //mv.getController().setCenter(new GeoPoint(newLoc.getLatitude(), newLoc.getLongitude()));
-        //Log.d(TAG, newLoc.getLatitude() + " " + newLoc.getLongitude());
+        latitude = newLoc.getLatitude();
+        longitude = newLoc.getLongitude();
     }
 
     @Override
     public void onProviderDisabled(String provider) {
-        //Toast.makeText(this, "Provider " + provider + " disabled", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, String.format("Please enable the %s provider for the location accuracy!", provider), Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-        //Toast.makeText(this, "Provider " + provider + " enabled", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, String.format("%s provider has been enabled!", provider), Toast.LENGTH_LONG).show();
     }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        //Toast.makeText(this, "Status changed: " + status, Toast.LENGTH_LONG).show();
-    }
+    public void onStatusChanged(String provider, int status, Bundle extras) { }
 
     private void popupMessage(String message) {
         new AlertDialog.Builder(this).setPositiveButton("OK", null).setMessage(message).show();
@@ -282,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 items.addItem(someLocation);
                 mv.getOverlays().add(items);
             }
-            Toast.makeText(this, String.format("Loaded %d places from the web", storesEntities.size()), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, String.format("Loaded %d places from the storage", storesEntities.size()), Toast.LENGTH_LONG).show();
         }
         catch (IOException e) {
             e.printStackTrace();

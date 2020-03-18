@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 
 import com.example.madassessment.dataEntities.PointOfInterestEntity;
 
-import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
