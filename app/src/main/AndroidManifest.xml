@@ -25,6 +25,7 @@
         </activity>
         <activity android:name=".Preferences" android:label="@string/setprefs"></activity>
         <activity android:name=".AddPlaceToStay" android:label="@string/addplace"></activity>
+        <activity android:name=".PoiListActivity" android:label="@string/listplaces"></activity>
     </application>
 
 </manifest>

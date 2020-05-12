@@ -6,6 +6,7 @@
     <string name="loadplaces">Load all places</string>
     <string name="loadweb">Load web places</string>
     <string name="saveweb">Save places to web</string>
+    <string name="listplaces">List places</string>
     <string name="setprefs">Preferences</string>
 
     <string name="poiname">POI Name</string>

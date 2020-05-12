@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private Double longitude = Constants.DEFAULT_LON;
     private Double zoom = Constants.DEFAULT_ZOOM;
     private static final String TAG = "MainActivity";
+    // Change on next commit -> this.getClass().getSimpleName();
 
     ItemizedIconOverlay.OnItemGestureListener<OverlayItem> markerGestureListener;
     ArrayList<PointOfInterestEntity> storesPointsOfInterest;
@@ -98,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         items = new ItemizedIconOverlay<OverlayItem>(this, new ArrayList<OverlayItem>(), markerGestureListener);
         mv.getOverlays().add(items);
+        mv.invalidate();
     }
 
     /*
@@ -137,6 +140,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             SaveWebTask saveWebTask = new SaveWebTask();
             saveWebTask.execute();
         }
+        else if (item.getItemId() == R.id.listplaces) {
+            Intent intent = new Intent(this, PoiListActivity.class);
+            startActivityForResult(intent, 2);
+            return true;
+        }
         return false;
     }
 
@@ -159,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
                 items.addItem(someLocation);
                 mv.getOverlays().add(items);
+                mv.invalidate();
 
                 try {
                     PointOfInterestEntity pointOfInterest = new PointOfInterestEntity(getPoiName, getPoiType, getPoiPrice, latitude, longitude);
@@ -173,6 +182,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 catch (Exception e) {
                     popupMessage("Error: " + e.getMessage() + " error has occurred.");
                     e.printStackTrace();
+                }
+            }
+        }
+        else if (requestCode == 2) {
+            if (resultCode == RESULT_OK) {
+                try {
+                    Bundle extras = intent.getExtras();
+                    int storesPoiIndex = extras.getInt("com.example.poiindex");
+                }
+                catch (NullPointerException e) {
+                    Log.i(TAG, "Thrown exception " + e.getStackTrace());
                 }
             }
         }
@@ -274,6 +294,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
                 items.addItem(someLocation);
                 mv.getOverlays().add(items);
+                mv.invalidate();
             }
             Toast.makeText(this, String.format("Loaded %d places from the storage", storesEntities.size()), Toast.LENGTH_LONG).show();
         }
@@ -292,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             while((magicLine = reader.readLine()) != null) {
                 String components[] = magicLine.split(",");
-                PointOfInterestEntity pointOfInterestEntity = new PointOfInterestEntity(components[0], components[1], Double.parseDouble(components[2]), Double.parseDouble(components[4]), Double.parseDouble(components[3]));
+                PointOfInterestEntity pointOfInterestEntity = new PointOfInterestEntity(components[0], components[1], Double.parseDouble(components[2]), Double.parseDouble(components[3]), Double.parseDouble(components[4]));
                 storesEntities.add(pointOfInterestEntity);
             }
 
@@ -319,6 +340,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
                 items.addItem(someLocation);
                 mv.getOverlays().add(items);
+                mv.invalidate();
             }
             Toast.makeText(this, String.format("Loaded %d places from the Internet storage", storesEntities.size()), Toast.LENGTH_LONG).show();
         }

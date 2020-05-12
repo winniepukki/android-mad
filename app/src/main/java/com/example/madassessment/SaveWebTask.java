@@ -88,7 +88,7 @@ public class SaveWebTask extends AsyncTask<Void, Void, String> {
         catch (IOException e) {
             e.printStackTrace();
         }
-        return "HTTP ERROR:";
+        return "HTTP error has occurred!";
     }
 
     @Override

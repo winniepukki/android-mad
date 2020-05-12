@@ -79,7 +79,7 @@ public class LoadWebTask extends AsyncTask<Void, Void, String> {
                 connection.disconnect();
             }
         }
-        return "HTTP ERROR:";
+        return "HTTP error has occurred!";
     }
 
     public void onPostExecute(String message) {
