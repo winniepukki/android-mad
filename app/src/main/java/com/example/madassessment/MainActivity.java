@@ -188,11 +188,35 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         else if (requestCode == 2) {
             if (resultCode == RESULT_OK) {
                 try {
-                    Bundle extras = intent.getExtras();
-                    int storesPoiIndex = extras.getInt("com.example.poiindex");
+                    try {
+                        Bundle extras = intent.getExtras();
+                        int storesPoiIndex = extras.getInt("com.example.poiindex");
+
+                        BufferedReader reader = new BufferedReader(new FileReader(Environment.getExternalStorageDirectory().getAbsolutePath() + "/records.csv"));
+                        String magicLine = "";
+
+                        ArrayList<PointOfInterestEntity> storesEntities = new ArrayList<>();
+
+                        while((magicLine = reader.readLine()) != null) {
+                            String components[] = magicLine.split(",");
+                            PointOfInterestEntity pointOfInterestEntity = new PointOfInterestEntity(components[0], components[1], Double.parseDouble(components[2]), Double.parseDouble(components[3]), Double.parseDouble(components[4]));
+                            storesEntities.add(pointOfInterestEntity);
+                        }
+
+                        Double storesLatitude = storesEntities.get(storesPoiIndex).getLatitude();
+                        Double storesLongitude = storesEntities.get(storesPoiIndex).getLongitude();
+
+                        loadPlacesFromWeb();
+                        loadPlaces();
+
+                        mv.getController().setCenter(new GeoPoint(storesLatitude, storesLongitude));
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 catch (NullPointerException e) {
-                    Log.i(TAG, "Thrown exception " + e.getStackTrace());
+                    Log.i(TAG, "Thrown null point exception " + e.getStackTrace());
                 }
             }
         }
@@ -257,10 +281,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 printWriter.close();
                 return true;
             }
-            else {
-                Log.d(TAG, "PrintWriter returned null, please debug it!");
-                return false;
-            }
+            Log.d(TAG, "PrintWriter returned null, please debug it!");
+            return false;
         }
     }
 

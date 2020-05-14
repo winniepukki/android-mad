@@ -24,12 +24,15 @@ import java.util.ArrayList;
 public class PoiListActivity extends ListActivity {
 
     private final String TAG = this.getClass().getSimpleName();
-    String[] names, details;
+    ArrayList<String> magicEntities;
+    ArrayList<String> magicDescriptions;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         ArrayList<PointOfInterestEntity> storesEntities = new ArrayList<>();
+        magicEntities = new ArrayList<>();
+        magicDescriptions = new ArrayList<>();
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(Environment.getExternalStorageDirectory().getAbsolutePath() + "/records.csv"));
@@ -47,10 +50,9 @@ public class PoiListActivity extends ListActivity {
 
                 Double getPoiPrice = storesEntities.get(i).getPrice();
 
-                names = new String[] { getPoiName };
-                details = new String[] { "Type: " + getPoiType + " Price: " + getPoiPrice };
+                magicEntities.add(getPoiName);
+                magicDescriptions.add(getPoiType + " " + getPoiPrice);
             }
-            Toast.makeText(this, String.format("Loaded %d places from the storage", storesEntities.size()), Toast.LENGTH_LONG).show();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -66,8 +68,8 @@ public class PoiListActivity extends ListActivity {
 
         try {
             bundle.putInt("com.example.poiindex", index);
-
             intent.putExtras(bundle);
+
             setResult(RESULT_OK, intent);
             finish();
         }
@@ -78,7 +80,7 @@ public class PoiListActivity extends ListActivity {
 
     public class MyAdapter extends ArrayAdapter<String> {
         public MyAdapter() {
-            super(PoiListActivity.this, android.R.layout.simple_list_item_1, names);
+            super(PoiListActivity.this, android.R.layout.simple_list_item_1, magicEntities);
         }
 
         public View getView(int index, View convertView, ViewGroup parent) {
@@ -88,8 +90,8 @@ public class PoiListActivity extends ListActivity {
             TextView title = (TextView) view.findViewById(R.id.poi_name),
                      detail = (TextView) view.findViewById(R.id.poi_desc);
 
-            title.setText(names[index]);
-            detail.setText(details[index]);
+            title.setText(magicEntities.get(index));
+            detail.setText(magicDescriptions.get(index));
 
             return view;
         }

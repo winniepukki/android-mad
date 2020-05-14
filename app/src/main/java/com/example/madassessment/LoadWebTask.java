@@ -75,9 +75,9 @@ public class LoadWebTask extends AsyncTask<Void, Void, String> {
                         return null;
                     }
                 }
-
                 return magicString;
-            } else {
+            }
+            else {
                 return "HTTP ERROR: " + connection.getResponseCode();
             }
         } catch (IOException e) {
