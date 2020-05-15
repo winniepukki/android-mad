@@ -214,6 +214,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         loadPlaces();
 
                         mv.getController().setCenter(new GeoPoint(storesLatitude, storesLongitude));
+                        mv.getController().setZoom(18.0);
                     }
                     catch (IOException e) {
                         e.printStackTrace();

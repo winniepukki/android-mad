@@ -3,7 +3,7 @@
     <CheckBoxPreference
         android:key="autosavepoi"
         android:defaultValue="false"
-        android:title="Auto-save Points of Interest"
-        android:summary="Auto-download Points of Interest on add"
+        android:title="@string/pref_autosave_name"
+        android:summary="@string/pref_autosave"
         />
 </PreferenceScreen>
